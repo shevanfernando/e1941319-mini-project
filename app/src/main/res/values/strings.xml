@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">e1941319_mini_project</string>
+    <string name="login_page_txt">SIGN IN</string>
+    <string name="hint_username">Username</string>
+</resources>
