@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Shevan/IdeaProjects/e1941319_mini_project/app/src/main/res/drawable/customer_password_icon.xml" value="0.25" />
+        <entry key="..\:/Users/Shevan/IdeaProjects/e1941319_mini_project/app/src/main/res/drawable/customer_user_icon.xml" value="0.2755208333333333" />
+        <entry key="..\:/Users/Shevan/IdeaProjects/e1941319_mini_project/app/src/main/res/drawable/ic_password.xml" value="0.2755208333333333" />
+        <entry key="..\:/Users/Shevan/IdeaProjects/e1941319_mini_project/app/src/main/res/drawable/ic_password_focused.xml" value="0.2755208333333333" />
+        <entry key="..\:/Users/Shevan/IdeaProjects/e1941319_mini_project/app/src/main/res/drawable/ic_user.xml" value="0.2755208333333333" />
+        <entry key="..\:/Users/Shevan/IdeaProjects/e1941319_mini_project/app/src/main/res/drawable/ic_user_focused.xml" value="0.2755208333333333" />
+        <entry key="..\:/Users/Shevan/IdeaProjects/e1941319_mini_project/app/src/main/res/layout/login.xml" value="0.264" />
+      </map>
+    </option>
+  </component>
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
