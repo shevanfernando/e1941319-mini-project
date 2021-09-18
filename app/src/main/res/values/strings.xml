@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">e1941319_mini_project</string>
-    <string name="login_page_txt">SIGN IN</string>
+    <string name="app_name">Package Tracker</string>
+    <string name="login_page_txt">Login</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
-    <string name="login_button">Login</string>
+    <string name="user_activity">User View</string>
+    <string name="postmen_activity">Postmen View</string>
+    <string name="staff_activity">Staff View</string>
 </resources>
