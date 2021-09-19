@@ -24,20 +24,17 @@ public class AddPackageActivity extends AppCompatActivity {
         EditText txt_pkg_description = (EditText) findViewById(R.id.txt_pkg_description);
 
 
-        btn_save_pkg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String customerId = "U_00103";
-                String deliveryAddress = txt_pkg_address.getText().toString();
-                String description = txt_pkg_description.getText().toString();
-                db.addNewPackage(AddPackageActivity.this, new PackageDTO(customerId, deliveryAddress, description)).observe(AddPackageActivity.this, result -> {
-                    if (result) {
-                        Toast.makeText(AddPackageActivity.this, "New Package Add Successfully.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(AddPackageActivity.this, "New Package Add Failed.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+        btn_save_pkg.setOnClickListener(view -> {
+            String customerId = "U_00103";
+            String deliveryAddress = txt_pkg_address.getText().toString();
+            String description = txt_pkg_description.getText().toString();
+            db.addNewPackage(AddPackageActivity.this, new PackageDTO(customerId, deliveryAddress, description)).observe(AddPackageActivity.this, result -> {
+                if (result) {
+                    Toast.makeText(AddPackageActivity.this, "New Package Add Successfully.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AddPackageActivity.this, "New Package Add Failed.", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 }

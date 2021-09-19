@@ -28,20 +28,17 @@ public class DBAdapter {
 
     public MutableLiveData<LoginResponseDTO> login(LoginDTO loginDTO) {
         MutableLiveData<LoginResponseDTO> loginRequest = new MutableLiveData<>();
-        FIREBANSEFIRESTORE.collection("users").whereEqualTo("username", loginDTO.getUsername()).whereEqualTo("password", loginDTO.getPassword()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    if (!task.getResult().isEmpty()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            loginRequest.postValue(new LoginResponseDTO(UserType.valueOf((String) document.get("accountType")), true));
-                        }
-                    } else {
-                        loginRequest.postValue(new LoginResponseDTO(null, false));
+        FIREBANSEFIRESTORE.collection("users").whereEqualTo("username", loginDTO.getUsername()).whereEqualTo("password", loginDTO.getPassword()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (!task.getResult().isEmpty()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        loginRequest.postValue(new LoginResponseDTO(UserType.valueOf((String) document.get("accountType")), true));
                     }
                 } else {
-                    Log.e("Login Activity", "Error getting documents: ", task.getException());
+                    loginRequest.postValue(new LoginResponseDTO(null, false));
                 }
+            } else {
+                Log.e("Login Activity", "Error getting documents: ", task.getException());
             }
         });
         return loginRequest;
@@ -60,12 +57,9 @@ public class DBAdapter {
             if (res != null) {
                 pkg.put("id", res.getId());
 
-                FIREBANSEFIRESTORE.collection("packages").document(res.getDocumentId()).set(pkg).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("Add Package Activity", "DocumentSnapshot successfully written!");
-                        isNewPackageAdd.postValue(true);
-                    }
+                FIREBANSEFIRESTORE.collection("packages").document(res.getDocumentId()).set(pkg).addOnSuccessListener(aVoid -> {
+                    Log.d("Add Package Activity", "DocumentSnapshot successfully written!");
+                    isNewPackageAdd.postValue(true);
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {

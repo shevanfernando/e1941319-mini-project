@@ -27,48 +27,45 @@ public class LoginActivity extends AppCompatActivity {
         DBAdapter db = new DBAdapter();
 
 
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    String username = txt_username.getText().toString();
-                    String password = txt_password.getText().toString();
+        btn_login.setOnClickListener(view -> {
+            try {
+                String username = txt_username.getText().toString();
+                String password = txt_password.getText().toString();
 
-                    // check username and password fields are empty or not
-                    if (TextUtils.isEmpty(username) && TextUtils.isEmpty(password)) {
-                        Toast.makeText(LoginActivity.this, "Username and Password fields are required!", Toast.LENGTH_LONG).show();
-                    } else if (TextUtils.isEmpty(username)) {
-                        Toast.makeText(LoginActivity.this, "Username field is required!", Toast.LENGTH_LONG).show();
-                    } else if (TextUtils.isEmpty(password)) {
-                        Toast.makeText(LoginActivity.this, "Password field is required!", Toast.LENGTH_LONG).show();
-                    } else {
-                        db.login(new LoginDTO(username, password)).observe(LoginActivity.this, result -> {
-                            if (result.getStatus()) {
-                                Toast.makeText(LoginActivity.this, String.format("%s Login Successfully.", username), Toast.LENGTH_SHORT).show();
-                                Intent intent;
-                                switch (result.getUserType()) {
-                                    case STAFF:
-                                        intent = new Intent(LoginActivity.this, StaffActivity.class);
-                                        startActivity(intent);
-                                        break;
-                                    case POSTMEN:
-                                        intent = new Intent(LoginActivity.this, PostmenActivity.class);
-                                        startActivity(intent);
-                                        break;
-                                    default:
-                                        intent = new Intent(LoginActivity.this, UserActivity.class);
-                                        startActivity(intent);
-                                }
-                            } else {
-                                Toast.makeText(LoginActivity.this, "Login Failed! Try Again.", Toast.LENGTH_SHORT).show();
+                // check username and password fields are empty or not
+                if (TextUtils.isEmpty(username) && TextUtils.isEmpty(password)) {
+                    Toast.makeText(LoginActivity.this, "Username and Password fields are required!", Toast.LENGTH_LONG).show();
+                } else if (TextUtils.isEmpty(username)) {
+                    Toast.makeText(LoginActivity.this, "Username field is required!", Toast.LENGTH_LONG).show();
+                } else if (TextUtils.isEmpty(password)) {
+                    Toast.makeText(LoginActivity.this, "Password field is required!", Toast.LENGTH_LONG).show();
+                } else {
+                    db.login(new LoginDTO(username, password)).observe(LoginActivity.this, result -> {
+                        if (result.getStatus()) {
+                            Toast.makeText(LoginActivity.this, String.format("%s Login Successfully.", username), Toast.LENGTH_SHORT).show();
+                            Intent intent;
+                            switch (result.getUserType()) {
+                                case STAFF:
+                                    intent = new Intent(LoginActivity.this, StaffActivity.class);
+                                    startActivity(intent);
+                                    break;
+                                case POSTMEN:
+                                    intent = new Intent(LoginActivity.this, PostmenActivity.class);
+                                    startActivity(intent);
+                                    break;
+                                default:
+                                    intent = new Intent(LoginActivity.this, UserActivity.class);
+                                    startActivity(intent);
                             }
-                        });
-                    }
-                } catch (Exception e) {
-                    // log the error
-                    Log.e("LoginActivity", e.getMessage());
-                    Toast.makeText(LoginActivity.this, "Something Wrong...", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Login Failed! Try Again.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
+            } catch (Exception e) {
+                // log the error
+                Log.e("LoginActivity", e.getMessage());
+                Toast.makeText(LoginActivity.this, "Something Wrong...", Toast.LENGTH_LONG).show();
             }
         });
     }
