@@ -3,7 +3,6 @@ package com.example.e1941319_mini_project;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.e1941319_mini_project.dto.LoginDTO;
@@ -19,7 +18,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class DBAdapter {
     private final FirebaseFirestore FIREBANSEFIRESTORE;
