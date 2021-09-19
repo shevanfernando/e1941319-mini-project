@@ -1,58 +1,84 @@
 package com.example.e1941319_mini_project;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.e1941319_mini_project.dto.LoginDTO;
 import com.example.e1941319_mini_project.dto.LoginResponseDTO;
-import com.example.e1941319_mini_project.models.UserType;
+import com.example.e1941319_mini_project.dto.PackageDTO;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class DBAdapter extends SQLiteOpenHelper {
-    public DBAdapter(@Nullable Context context) {
-        super(context, "package_tracker.db", null, 1);
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+public class DBAdapter {
+    private final FirebaseFirestore FIREBANSEFIRESTORE;
+
+    public DBAdapter() {
+        this.FIREBANSEFIRESTORE = FirebaseFirestore.getInstance();
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        System.out.println("Start - DB");
-        String createTableStatement = "CREATE TABLE USER_TABLE (ID INTEGER PRIMARY KEY AUTOINCREMENT, USER_NAME TEXT, PASSWORD TEXT, USER_TYPE TEXT)";
-        db.execSQL(createTableStatement);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS USER_TABLE");
-        onCreate(db);
-    }
-
-    public Boolean addUsers() {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put("USER_NAME", "admin");
-        contentValues.put("PASSWORD", "admin");
-        contentValues.put("USER_TYPE", UserType.USER.toString());
-
-        long res = db.insert("USER_TABLE", null, contentValues);
-
-        return res != -1;
-    }
-
-    public LoginResponseDTO checkUsernameAndPassword(LoginDTO user) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT USER_TYPE FROM USER_TABLE WHERE USER_NAME=? AND PASSWORD=?", new String[]{user.getUsername(), user.getPassword()});
-        if (cursor.getCount() > 0) {
-            if (cursor.moveToFirst()) {
-                return new LoginResponseDTO(UserType.valueOf(cursor.getString(0)), true);
+    public MutableLiveData<LoginResponseDTO> login(LoginDTO loginDTO) {
+        MutableLiveData<LoginResponseDTO> loginRequest = new MutableLiveData<>();
+        FIREBANSEFIRESTORE.collection("users").whereEqualTo("username", loginDTO.getUsername()).whereEqualTo("password", loginDTO.getPassword()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (!task.getResult().isEmpty()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            loginRequest.postValue(new LoginResponseDTO(UserType.valueOf((String) document.get("accountType")), true));
+                        }
+                    } else {
+                        loginRequest.postValue(new LoginResponseDTO(null, false));
+                    }
+                } else {
+                    Log.e("Login Activity", "Error getting documents: ", task.getException());
+                }
             }
-        }
-
-        return new LoginResponseDTO(null, false);
+        });
+        return loginRequest;
     }
+
+
+    public MutableLiveData<Boolean> addNewPackage(AddPackageActivity add, PackageDTO packageDTO) {
+        MutableLiveData<Boolean> isNewPackageAdd = new MutableLiveData<>();
+        Map<String, Object> pkg = new HashMap<>();
+        pkg.put("customerId", packageDTO.getCustomerId());
+        pkg.put("deliveryAddress", packageDTO.getDeliveryAddress());
+        pkg.put("description", packageDTO.getDescription());
+
+        IdSequenceGenerator sequenceGenerator = new IdSequenceGenerator(FIREBANSEFIRESTORE, "packages");
+        sequenceGenerator.generateId().observe(add, res -> {
+            if (res != null) {
+                pkg.put("id", res.getId());
+
+                FIREBANSEFIRESTORE.collection("packages").document(res.getDocumentId()).set(pkg).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Add Package Activity", "DocumentSnapshot successfully written!");
+                        isNewPackageAdd.postValue(true);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Add Package Activity", "Error writing document", e);
+                        isNewPackageAdd.postValue(false);
+                    }
+                });
+            }
+        });
+
+        return isNewPackageAdd;
+    }
+
 }

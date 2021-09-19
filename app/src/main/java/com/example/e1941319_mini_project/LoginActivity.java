@@ -6,31 +6,25 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.e1941319_mini_project.dto.LoginDTO;
-import com.example.e1941319_mini_project.dto.LoginResponseDTO;
-import com.google.android.material.textfield.TextInputEditText;
 
 public class LoginActivity extends AppCompatActivity {
-
-    // references to controls on the layout
-    Button btn_login;
-    TextInputEditText txt_username, txt_password;
-    DBAdapter db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // initialize controls
-        btn_login = (Button) findViewById(R.id.btn_login);
-        txt_username = findViewById(R.id.txt_username);
-        txt_password = findViewById(R.id.txt_password);
-        db = new DBAdapter(LoginActivity.this);
+        // references to controls on the layout
+        Button btn_login = (Button) findViewById(R.id.btn_login);
+        EditText txt_username = (EditText) findViewById(R.id.txt_username);
+        EditText txt_password = (EditText) findViewById(R.id.txt_password);
+        DBAdapter db = new DBAdapter();
 
 
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -48,27 +42,27 @@ public class LoginActivity extends AppCompatActivity {
                     } else if (TextUtils.isEmpty(password)) {
                         Toast.makeText(LoginActivity.this, "Password field is required!", Toast.LENGTH_LONG).show();
                     } else {
-                        LoginResponseDTO result = db.checkUsernameAndPassword(new LoginDTO(username, password));
-                        System.out.println(result);
-                        if (result.getStatus()) {
-                            Toast.makeText(LoginActivity.this, String.format("%s Login Successfully.", username), Toast.LENGTH_SHORT).show();
-                            Intent intent;
-                            switch (result.getUserType()) {
-                                case STAFF:
-                                    intent = new Intent(LoginActivity.this, StaffActivity.class);
-                                    startActivity(intent);
-                                    break;
-                                case POSTMEN:
-                                    intent = new Intent(LoginActivity.this, PostmenActivity.class);
-                                    startActivity(intent);
-                                    break;
-                                default:
-                                    intent = new Intent(LoginActivity.this, UserActivity.class);
-                                    startActivity(intent);
+                        db.login(new LoginDTO(username, password)).observe(LoginActivity.this, result -> {
+                            if (result.getStatus()) {
+                                Toast.makeText(LoginActivity.this, String.format("%s Login Successfully.", username), Toast.LENGTH_SHORT).show();
+                                Intent intent;
+                                switch (result.getUserType()) {
+                                    case STAFF:
+                                        intent = new Intent(LoginActivity.this, StaffActivity.class);
+                                        startActivity(intent);
+                                        break;
+                                    case POSTMEN:
+                                        intent = new Intent(LoginActivity.this, PostmenActivity.class);
+                                        startActivity(intent);
+                                        break;
+                                    default:
+                                        intent = new Intent(LoginActivity.this, UserActivity.class);
+                                        startActivity(intent);
+                                }
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Login Failed! Try Again.", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            Toast.makeText(LoginActivity.this, String.format("%s Login Failed! Try Again.", username), Toast.LENGTH_SHORT).show();
-                        }
+                        });
                     }
                 } catch (Exception e) {
                     // log the error

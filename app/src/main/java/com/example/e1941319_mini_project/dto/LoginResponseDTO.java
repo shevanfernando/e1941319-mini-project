@@ -1,6 +1,6 @@
 package com.example.e1941319_mini_project.dto;
 
-import com.example.e1941319_mini_project.models.UserType;
+import com.example.e1941319_mini_project.UserType;
 
 public class LoginResponseDTO {
 
