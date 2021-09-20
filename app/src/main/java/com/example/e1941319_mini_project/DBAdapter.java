@@ -8,15 +8,13 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.e1941319_mini_project.dto.LoginDTO;
 import com.example.e1941319_mini_project.dto.LoginResponseDTO;
 import com.example.e1941319_mini_project.dto.PackageDTO;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DBAdapter {
@@ -73,4 +71,25 @@ public class DBAdapter {
         return isNewPackageAdd;
     }
 
+    public MutableLiveData<List<String>> getAllCustomers() {
+        MutableLiveData<List<String>> customers = new MutableLiveData<>();
+
+        FIREBANSEFIRESTORE.collection("users").whereEqualTo("accountType", "USER").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (!task.getResult().isEmpty()) {
+                    List<String> customerList = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        customerList.add(document.getId());
+                    }
+                    customers.postValue(customerList);
+                } else {
+                    customers.postValue(null);
+                }
+            } else {
+                Log.e("Login Activity", "Error getting documents: ", task.getException());
+            }
+        });
+
+        return customers;
+    }
 }
