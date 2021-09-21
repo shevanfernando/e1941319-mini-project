@@ -1,41 +1,48 @@
 package com.example.e1941319_mini_project;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class StaffActivity extends AppCompatActivity {
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
-    private static final String[] COUNTRIES = new String[]{"SRI LANKA", "USA", "UK", "INDIA"};
+import com.example.e1941319_mini_project.model.Package;
+
+public class StaffActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff);
 
+        DBAdapter db = new DBAdapter();
+
         Button addNewPkg = findViewById(R.id.btn_add_pkg);
         AutoCompleteTextView autoCompleteTextView = findViewById(R.id.txt_search_pkg);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(StaffActivity.this, android.R.layout.simple_list_item_1, COUNTRIES);
-        autoCompleteTextView.setAdapter(adapter);
 
-        addNewPkg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(StaffActivity.this, "Open add new package page", Toast.LENGTH_SHORT).show();
+        db.getAllPackages("Staff Activity", null).observe(StaffActivity.this, res -> {
+            if (res != null) {
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(StaffActivity.this, android.R.layout.simple_list_item_1, res.getPackageIdList());
+                autoCompleteTextView.setAdapter(adapter);
 
-                Intent intent = new Intent(StaffActivity.this, AddPackageActivity.class);
-                startActivity(intent);
+                if (savedInstanceState == null) {
+                    getSupportFragmentManager().beginTransaction().add(R.id.container, ProductCardFragment.newInstance(new Package("PKG_01", null, "Kalutara", "ABC", null))).commit();
+                }
             }
+        });
+
+        addNewPkg.setOnClickListener(view -> {
+            Toast.makeText(StaffActivity.this, "Open add new package page", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(StaffActivity.this, AddPackageActivity.class);
+            startActivity(intent);
         });
     }
 

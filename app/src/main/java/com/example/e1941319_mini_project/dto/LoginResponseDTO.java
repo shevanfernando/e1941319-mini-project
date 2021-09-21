@@ -1,11 +1,13 @@
 package com.example.e1941319_mini_project.dto;
 
+import androidx.annotation.NonNull;
+
 import com.example.e1941319_mini_project.UserType;
 
 public class LoginResponseDTO {
 
-    private UserType userType;
-    private Boolean status;
+    private final UserType userType;
+    private final Boolean status;
 
     public LoginResponseDTO(UserType userType, Boolean status) {
         this.userType = userType;
@@ -16,18 +18,11 @@ public class LoginResponseDTO {
         return userType;
     }
 
-    public void setUserType(UserType userType) {
-        this.userType = userType;
-    }
-
     public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
-
+    @NonNull
     @Override
     public String toString() {
         return "LoginResponseDTO{" +

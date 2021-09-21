@@ -3,9 +3,9 @@ package com.example.e1941319_mini_project.dto;
 public class PackageDTO {
 
     private String packageId;
-    private String customerId;
-    private String deliveryAddress;
-    private String description;
+    private final String customerId;
+    private final String deliveryAddress;
+    private final String description;
 
     public PackageDTO(String customerId, String deliveryAddress, String description) {
         this.customerId = customerId;
@@ -24,32 +24,16 @@ public class PackageDTO {
         return packageId;
     }
 
-    public void setPackageId(String packageId) {
-        this.packageId = packageId;
-    }
-
     public String getCustomerId() {
         return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
     }
 
     public String getDeliveryAddress() {
         return deliveryAddress;
     }
 
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Override
