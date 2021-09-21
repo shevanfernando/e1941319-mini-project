@@ -2,6 +2,7 @@ package com.example.e1941319_mini_project;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.e1941319_mini_project.model.Package;
 import com.example.e1941319_mini_project.model.Status;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -29,11 +31,15 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
 
     private final Context context;
     private final List<Package> packageList;
+    private final UserType loginUserType;
+    private final StatusType[] statusArray;
     private ViewGroup parent;
 
-    public PackageCardAdapter(Context context, List<Package> packageList) {
+    public PackageCardAdapter(Context context, List<Package> packageList, UserType loginUserType, StatusType[] statusArray) {
         this.context = context;
         this.packageList = packageList;
+        this.loginUserType = loginUserType;
+        this.statusArray = statusArray;
     }
 
     @NonNull
@@ -80,7 +86,7 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
                         TextView pkg_status_label = view2.findViewById(R.id.pkg_status_label);
 
                         pkg_status_date.setText(status.getDate());
-                        pkg_status_label.setText(status.getStatus());
+                        pkg_status_label.setText(status.getStatus().toString());
 
                         holder.hiddenView.addView(view2);
                     }
@@ -93,6 +99,20 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
             @Override
             public void onClick(View view) {
                 System.out.println(pkg);
+                System.out.println(loginUserType);
+
+                Intent intent = new Intent(context, PackageSingleViewActivity.class);
+
+                intent.putExtra("packageId", pkg.getPackageId());
+                intent.putExtra("customerId", pkg.getCustomerId());
+                intent.putExtra("deliveryAddress", pkg.getDeliveryAddress());
+                intent.putExtra("description", pkg.getDescription());
+                intent.putExtra("currentStatus", pkg.getCurrentStatus());
+                intent.putExtra("loginUserType", loginUserType);
+                intent.putExtra("statusArray", statusArray);
+                intent.putExtra("statusList", (Serializable) pkg.getStatus());
+
+                context.startActivity(intent);
             }
         });
     }

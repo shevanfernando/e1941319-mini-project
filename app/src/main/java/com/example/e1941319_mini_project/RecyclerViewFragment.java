@@ -25,13 +25,17 @@ public class RecyclerViewFragment extends Fragment {
     @SuppressLint("StaticFieldLeak")
     private static Context context;
     private static List<Package> packageList;
+    private static UserType loginUser;
+    private static StatusType[] statusArray;
 
     public RecyclerViewFragment() {
     }
 
-    public static RecyclerViewFragment newInstance(Context cnxt, List<Package> packages) {
+    public static RecyclerViewFragment newInstance(Context cnxt, List<Package> packages, UserType loginUserType, StatusType[] status) {
         context = cnxt;
         packageList = packages;
+        loginUser = loginUserType;
+        statusArray = status;
         return new RecyclerViewFragment();
     }
 
@@ -44,7 +48,7 @@ public class RecyclerViewFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        PackageCardAdapter adapter = new PackageCardAdapter(context, packageList);
+        PackageCardAdapter adapter = new PackageCardAdapter(context, packageList, loginUser, statusArray);
         recyclerView.setAdapter(adapter);
         return view;
     }

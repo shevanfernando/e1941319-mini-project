@@ -144,14 +144,14 @@ public class DBAdapter {
                                 if (task2.getResult().exists()) {
                                     for (Map.Entry<String, Object> entry : task2.getResult().getData().entrySet()) {
                                         if (!entry.getKey().equals("id")) {
-                                            statusHistoryList.add(new Status(entry.getKey(), (String) entry.getValue()));
+                                            statusHistoryList.add(new Status(entry.getKey(), StatusType.valueOf(entry.getValue().toString())));
                                         }
                                     }
                                 }
                             }
                         });
 
-                        packageData.add(new Package(document.getId(), document.getString("customerId"), document.getString("deliveryAddress"), document.getString("description"), document.getString("currentStatus"), statusHistoryList));
+                        packageData.add(new Package(document.getId(), document.getString("customerId"), document.getString("deliveryAddress"), document.getString("description"), StatusType.valueOf(document.getString("currentStatus")), statusHistoryList));
                     }
                     data.postValue(new FetchPackageDataDTO(packageIdList, packageData));
                 } else {

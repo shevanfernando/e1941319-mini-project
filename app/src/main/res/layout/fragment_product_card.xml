@@ -33,7 +33,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/fixed_layout"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -72,28 +72,26 @@
 
                 <TextView
                     android:id="@+id/crd_pkg_address_label"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/address"
                     android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/crd_pkg_address_title"
                     app:layout_constraintTop_toBottomOf="@+id/crd_pkg_heading" />
 
                 <TextView
                     android:id="@+id/crd_pkg_description"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="58dp"
+                    android:layout_marginTop="8dp"
                     android:text="@string/hint_pkg_address"
                     android:textSize="15sp"
-                    app:layout_constraintHorizontal_bias="0.878"
-                    app:layout_constraintStart_toEndOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/crd_pkg_address_title"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintTop_toBottomOf="@+id/crd_pkg_address_label" />
 
                 <ImageButton
                     android:id="@+id/expand_button"
@@ -104,8 +102,8 @@
                     android:minWidth="48dp"
                     android:minHeight="48dp"
                     android:src="@drawable/ic_expand_more"
-                    app:layout_constraintBottom_toBottomOf="@id/fixed_layout"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/crd_pkg_description" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
