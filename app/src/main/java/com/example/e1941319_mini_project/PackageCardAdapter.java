@@ -21,7 +21,6 @@ import com.example.e1941319_mini_project.model.Status;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,17 +63,14 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
                             new AutoTransition());
                     holder.hiddenView.setVisibility(View.VISIBLE);
 
-                    Collections.sort(pkg.getStatus(), new Comparator<Status>() {
-                        @Override
-                        public int compare(Status status, Status status2) {
-                            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            try {
-                                return Objects.requireNonNull(dateFormat.parse(status.getDate())).compareTo(dateFormat.parse(status2.getDate()));
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            return 0;
+                    Collections.sort(pkg.getStatus(), (status, status2) -> {
+                        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            return Objects.requireNonNull(dateFormat.parse(status.getDate())).compareTo(dateFormat.parse(status2.getDate()));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
+                        return 0;
                     });
 
                     for (Status status : pkg.getStatus()) {
