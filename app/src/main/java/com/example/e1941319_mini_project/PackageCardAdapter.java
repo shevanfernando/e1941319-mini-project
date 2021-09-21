@@ -1,5 +1,6 @@
 package com.example.e1941319_mini_project;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
@@ -17,7 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.e1941319_mini_project.model.Package;
 import com.example.e1941319_mini_project.model.Status;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.PackageViewHolder> {
 
@@ -45,7 +51,7 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
         holder.crd_pkg_heading.setText(pkg.getPackageId());
         holder.crd_pkg_address_label.setText(pkg.getDeliveryAddress());
         holder.crd_pkg_description.setText(pkg.getDescription());
-        if (pkg.getStatus() != null && !pkg.getStatus().isEmpty()) {
+        if (pkg.getStatus() != null) {
             holder.expand_button.setOnClickListener(view1 -> {
                 if (holder.hiddenView.getVisibility() == View.VISIBLE) {
                     TransitionManager.beginDelayedTransition(holder.cardView,
@@ -57,6 +63,20 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
                     TransitionManager.beginDelayedTransition(holder.cardView,
                             new AutoTransition());
                     holder.hiddenView.setVisibility(View.VISIBLE);
+
+                    Collections.sort(pkg.getStatus(), new Comparator<Status>() {
+                        @Override
+                        public int compare(Status status, Status status2) {
+                            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            try {
+                                return Objects.requireNonNull(dateFormat.parse(status.getDate())).compareTo(dateFormat.parse(status2.getDate()));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            return 0;
+                        }
+                    });
+
                     for (Status status : pkg.getStatus()) {
                         View view2 = LayoutInflater.from(context).inflate(R.layout.package_status, parent, false);
                         TextView pkg_status_date = view2.findViewById(R.id.pkg_status_date);

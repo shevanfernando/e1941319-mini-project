@@ -1,5 +1,6 @@
 package com.example.e1941319_mini_project;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -52,6 +53,7 @@ public class DBAdapter {
     }
 
 
+    @SuppressLint("SimpleDateFormat")
     public MutableLiveData<Boolean> addNewPackage(@NonNull AddPackageActivity add, @NonNull PackageDTO packageDTO) {
         MutableLiveData<Boolean> isNewPackageAdd = new MutableLiveData<>();
 
