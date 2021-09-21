@@ -2,6 +2,8 @@ package com.example.e1941319_mini_project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.e1941319_mini_project.model.Package;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class StaffActivity extends AppCompatActivity {
 
@@ -41,12 +47,9 @@ public class StaffActivity extends AppCompatActivity {
 
         DBAdapter db = new DBAdapter();
 
-        AutoCompleteTextView autoCompleteTextView = findViewById(R.id.txt_search_pkg);
-
         db.getAllPackages("Staff Activity", null).observe(StaffActivity.this, res -> {
             if (res != null) {
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(StaffActivity.this, android.R.layout.simple_list_item_1, res.getPackageIdList());
-                autoCompleteTextView.setAdapter(adapter);
                 getSupportFragmentManager().beginTransaction().add(R.id.container, RecyclerViewFragment.newInstance(StaffActivity.this, res.getPackageData())).commit();
             }
         });

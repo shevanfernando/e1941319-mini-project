@@ -20,4 +20,12 @@ public class FetchPackageDataDTO {
     public List<Package> getPackageData() {
         return packageData;
     }
+
+    @Override
+    public String toString() {
+        return "FetchPackageDataDTO{" +
+                "packageIdList=" + packageIdList +
+                ", packageData=" + packageData +
+                '}';
+    }
 }

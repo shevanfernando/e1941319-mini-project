@@ -164,4 +164,10 @@ public class DBAdapter {
 
         return data;
     }
+
+    private Integer _calculatePackageId(String packageId) {
+        String[] s = packageId.split("_");
+        int i = Integer.parseInt(s[1]) - 10010;
+        return i;
+    }
 }
