@@ -45,20 +45,18 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
         holder.crd_pkg_heading.setText(pkg.getPackageId());
         holder.crd_pkg_address_label.setText(pkg.getDeliveryAddress());
         holder.crd_pkg_description.setText(pkg.getDescription());
-
-        holder.expand_button.setOnClickListener(view1 -> {
-            if (holder.hiddenView.getVisibility() == View.VISIBLE) {
-                TransitionManager.beginDelayedTransition(holder.cardView,
-                        new AutoTransition());
-                holder.hiddenView.setVisibility(View.GONE);
-                holder.expand_button.setImageResource(R.drawable.ic_expand_more);
-                holder.hiddenView.removeAllViews();
-            } else {
-                TransitionManager.beginDelayedTransition(holder.cardView,
-                        new AutoTransition());
-                holder.hiddenView.setVisibility(View.VISIBLE);
-
-                if (pkg.getStatus() != null) {
+        if (pkg.getStatus() != null) {
+            holder.expand_button.setOnClickListener(view1 -> {
+                if (holder.hiddenView.getVisibility() == View.VISIBLE) {
+                    TransitionManager.beginDelayedTransition(holder.cardView,
+                            new AutoTransition());
+                    holder.hiddenView.setVisibility(View.GONE);
+                    holder.expand_button.setImageResource(R.drawable.ic_expand_more);
+                    holder.hiddenView.removeAllViews();
+                } else {
+                    TransitionManager.beginDelayedTransition(holder.cardView,
+                            new AutoTransition());
+                    holder.hiddenView.setVisibility(View.VISIBLE);
                     for (Status status : pkg.getStatus()) {
                         View view2 = LayoutInflater.from(context).inflate(R.layout.package_status, parent, false);
                         TextView pkg_status_date = view2.findViewById(R.id.pkg_status_date);
@@ -69,10 +67,10 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
 
                         holder.hiddenView.addView(view2);
                     }
+                    holder.expand_button.setImageResource(R.drawable.ic_expand_less);
                 }
-                holder.expand_button.setImageResource(R.drawable.ic_expand_less);
-            }
-        });
+            });
+        }
     }
 
     @Override
