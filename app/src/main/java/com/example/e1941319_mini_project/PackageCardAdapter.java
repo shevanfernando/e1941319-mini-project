@@ -45,7 +45,7 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
         holder.crd_pkg_heading.setText(pkg.getPackageId());
         holder.crd_pkg_address_label.setText(pkg.getDeliveryAddress());
         holder.crd_pkg_description.setText(pkg.getDescription());
-        if (pkg.getStatus() != null) {
+        if (pkg.getStatus() != null && !pkg.getStatus().isEmpty()) {
             holder.expand_button.setOnClickListener(view1 -> {
                 if (holder.hiddenView.getVisibility() == View.VISIBLE) {
                     TransitionManager.beginDelayedTransition(holder.cardView,
