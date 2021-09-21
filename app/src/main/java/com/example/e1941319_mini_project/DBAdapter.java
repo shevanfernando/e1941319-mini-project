@@ -181,7 +181,7 @@ public class DBAdapter {
                 status.put(
                         new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
                         statusUpdateDTO.getStatus());
-                FIREBANSEFIRESTORE.collection("status_history").document(statusUpdateDTO.getStatusHistoryId()).set(status);
+                FIREBANSEFIRESTORE.collection("status_history").document(statusUpdateDTO.getStatusHistoryId()).update(status);
                 Log.d("Package_Single_View_Activity", "Package status update successfully.");
                 isPackageStatusUpdate.postValue(true);
             } else {
