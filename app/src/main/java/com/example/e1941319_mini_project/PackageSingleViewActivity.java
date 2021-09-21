@@ -23,9 +23,11 @@ import com.example.e1941319_mini_project.dto.PackageViewDTO;
 import com.example.e1941319_mini_project.dto.StatusUpdateDTO;
 import com.example.e1941319_mini_project.model.Package;
 import com.example.e1941319_mini_project.model.Status;
+import com.google.android.gms.common.util.ArrayUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -111,6 +113,7 @@ public class PackageSingleViewActivity extends AppCompatActivity {
                     currentStatusLabel.setVisibility(View.VISIBLE);
                     currentStatus.setVisibility(View.GONE);
                     statusSelect.setVisibility(View.VISIBLE);
+
                     ArrayAdapter<StatusType> adapter = new ArrayAdapter<>(PackageSingleViewActivity.this, android.R.layout.simple_list_item_1, statusArray);
 
                     statusSelect.setAdapter(adapter);

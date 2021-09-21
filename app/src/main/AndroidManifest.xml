@@ -12,18 +12,12 @@
         <activity
             android:name=".PackageSingleViewActivity"
             android:exported="true"
-            android:label="@string/single_package_view"/>
+            android:label="@string/single_package_view" />
         <activity
             android:name=".StaffActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
-            android:label="@string/staff_dashboard_activity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:label="@string/staff_dashboard_activity" />
         <activity
             android:name=".AddPackageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -31,13 +25,21 @@
             android:label="@string/add_new_package" />
         <activity
             android:name=".PostmenActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:label="@string/postmen_dashboard" />
         <activity
             android:name=".UserActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:label="@string/user_dashboard" />
         <activity
             android:name=".LoginActivity"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <meta-data
             android:name="preloaded_fonts"

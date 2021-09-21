@@ -54,7 +54,9 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     break;
                                 default:
+                                    Log.e("Login_Activity", result.getCustomerId());
                                     intent = new Intent(LoginActivity.this, UserActivity.class);
+                                    intent.putExtra("customerId", result.getCustomerId());
                                     startActivity(intent);
                             }
                         } else {

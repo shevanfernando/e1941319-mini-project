@@ -40,10 +40,10 @@ public class DBAdapter {
             if (task.isSuccessful()) {
                 if (!task.getResult().isEmpty()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        loginRequest.postValue(new LoginResponseDTO(UserType.valueOf((String) document.get("accountType")), true));
+                        loginRequest.postValue(new LoginResponseDTO(UserType.valueOf((String) document.get("accountType")), document.getId(), true));
                     }
                 } else {
-                    loginRequest.postValue(new LoginResponseDTO(null, false));
+                    loginRequest.postValue(new LoginResponseDTO(null, null, false));
                 }
             } else {
                 Log.e("Login Activity", "Error getting documents: ", task.getException());
@@ -124,6 +124,7 @@ public class DBAdapter {
         Task<QuerySnapshot> querySnapshotTask;
 
         if (username != null) {
+            Log.e("DB_Adapter", username);
             querySnapshotTask = FIREBANSEFIRESTORE.collection("packages").whereEqualTo("customerId", username).get();
         } else {
             querySnapshotTask = FIREBANSEFIRESTORE.collection("packages").get();

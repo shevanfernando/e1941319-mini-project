@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +32,7 @@ public class RecyclerViewFragment extends Fragment {
     public RecyclerViewFragment() {
     }
 
-    public static RecyclerViewFragment newInstance(Context cnxt, List<Package> packages, UserType loginUserType, StatusType[] status) {
+    public static RecyclerViewFragment newInstance(Context cnxt, List<Package> packages, UserType loginUserType, @Nullable StatusType[] status) {
         context = cnxt;
         packageList = packages;
         loginUser = loginUserType;
