@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.e1941319_mini_project.dto.PackageViewDTO;
 import com.example.e1941319_mini_project.model.Package;
 import com.example.e1941319_mini_project.model.Status;
 
@@ -98,19 +98,11 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(pkg);
-                System.out.println(loginUserType);
-
                 Intent intent = new Intent(context, PackageSingleViewActivity.class);
 
-                intent.putExtra("packageId", pkg.getPackageId());
-                intent.putExtra("customerId", pkg.getCustomerId());
-                intent.putExtra("deliveryAddress", pkg.getDeliveryAddress());
-                intent.putExtra("description", pkg.getDescription());
-                intent.putExtra("currentStatus", pkg.getCurrentStatus());
-                intent.putExtra("loginUserType", loginUserType);
-                intent.putExtra("statusArray", statusArray);
-                intent.putExtra("statusList", (Serializable) pkg.getStatus());
+                PackageViewDTO packageViewData = new PackageViewDTO(pkg, loginUserType, statusArray);
+
+                intent.putExtra("packageViewData", packageViewData);
 
                 context.startActivity(intent);
             }

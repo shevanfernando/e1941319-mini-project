@@ -1,12 +1,8 @@
 package com.example.e1941319_mini_project;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,11 +15,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
+
+import com.example.e1941319_mini_project.dto.PackageViewDTO;
+import com.example.e1941319_mini_project.dto.StatusUpdateDTO;
+import com.example.e1941319_mini_project.model.Package;
 import com.example.e1941319_mini_project.model.Status;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -50,17 +52,23 @@ public class PackageSingleViewActivity extends AppCompatActivity {
         // auto complete text view editable disable
         statusSelect.setKeyListener(null);
 
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            packageId.setText(extras.getString("packageId"));
-            customerId.setText(extras.getString("customerId"));
-            deliveryAddress.setText(extras.getString("deliveryAddress"));
-            description.setText(extras.getString("description"));
-            StatusType crsts = (StatusType) extras.get("currentStatus");
-            UserType loginUserType = (UserType) extras.get("loginUserType");
-            StatusType[] statusArray = (StatusType[]) extras.get("statusArray");
-            List<Status> statusList = (List<Status>) intent.getSerializableExtra("statusList");
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            PackageViewDTO packageViewDTO = (PackageViewDTO) bundle.getSerializable("packageViewData");
+
+            Package pkg = packageViewDTO.getPackageData();
+
+            System.out.println(pkg);
+
+            packageId.setText(pkg.getPackageId());
+            customerId.setText(pkg.getCustomerId());
+            deliveryAddress.setText(pkg.getDeliveryAddress());
+            description.setText(pkg.getDescription());
+            StatusType crsts = pkg.getCurrentStatus();
+            String statusHistoryId = pkg.getStatusHistoryId();
+            UserType loginUserType = packageViewDTO.getLoginUserType();
+            StatusType[] statusArray = packageViewDTO.getStatusArray();
+            List<Status> statusList = pkg.getStatus();
 
             // sort status list
             Collections.sort(statusList, (status, status2) -> {
@@ -108,8 +116,20 @@ public class PackageSingleViewActivity extends AppCompatActivity {
                     statusSelect.setAdapter(adapter);
                     statusSelect.setText(crsts.toString(), false);
 
-                    btn_update.setOnClickListener(view -> {
+                    DBAdapter db = new DBAdapter();
 
+                    btn_update.setOnClickListener(view -> {
+                        MutableLiveData<Boolean> isPackageStatusUpdate = db.updatePackageStatus(new StatusUpdateDTO(pkg.getPackageId(), StatusType.valueOf(statusSelect.getText().toString()), pkg.getStatusHistoryId()));
+
+                        isPackageStatusUpdate.observe(PackageSingleViewActivity.this, res -> {
+                            if (res != null) {
+                                if (res) {
+                                    Toast.makeText(PackageSingleViewActivity.this, "Package update successfully..", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(PackageSingleViewActivity.this, "Package update failed..", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     });
                 }
             }

@@ -11,6 +11,7 @@ import com.example.e1941319_mini_project.dto.FetchPackageDataDTO;
 import com.example.e1941319_mini_project.dto.LoginDTO;
 import com.example.e1941319_mini_project.dto.LoginResponseDTO;
 import com.example.e1941319_mini_project.dto.PackageDTO;
+import com.example.e1941319_mini_project.dto.StatusUpdateDTO;
 import com.example.e1941319_mini_project.model.Package;
 import com.example.e1941319_mini_project.model.Status;
 import com.google.android.gms.tasks.Task;
@@ -25,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class DBAdapter {
     private final FirebaseFirestore FIREBANSEFIRESTORE;
@@ -87,7 +87,7 @@ public class DBAdapter {
                         }
                     });
                 }).addOnFailureListener(e -> {
-                    Log.w("Add Package Activity", "Error writing document", e);
+                    Log.e("Add Package Activity", "Error writing document", e);
                     isNewPackageAdd.postValue(false);
                 });
             }
@@ -151,7 +151,7 @@ public class DBAdapter {
                             }
                         });
 
-                        packageData.add(new Package(document.getId(), document.getString("customerId"), document.getString("deliveryAddress"), document.getString("description"), StatusType.valueOf(document.getString("currentStatus")), statusHistoryList));
+                        packageData.add(new Package(document.getId(), document.getString("customerId"), document.getString("deliveryAddress"), document.getString("description"), StatusType.valueOf(document.getString("currentStatus")), document.getString("statusHistoryId"), statusHistoryList));
                     }
                     data.postValue(new FetchPackageDataDTO(packageIdList, packageData));
                 } else {
@@ -169,5 +169,29 @@ public class DBAdapter {
         String[] s = packageId.split("_");
         int i = Integer.parseInt(s[1]) - 10010;
         return i;
+    }
+
+    public MutableLiveData<Boolean> updatePackageStatus(StatusUpdateDTO statusUpdateDTO) {
+        MutableLiveData<Boolean> isPackageStatusUpdate = new MutableLiveData<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("currentStatus", statusUpdateDTO.getStatus());
+        FIREBANSEFIRESTORE.collection("packages").document(statusUpdateDTO.getPackageId()).update(map).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Map<String, Object> status = new HashMap<>();
+                status.put(
+                        new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
+                        statusUpdateDTO.getStatus());
+                FIREBANSEFIRESTORE.collection("status_history").document(statusUpdateDTO.getStatusHistoryId()).set(status);
+                Log.d("Package_Single_View_Activity", "Package status update successfully.");
+                isPackageStatusUpdate.postValue(true);
+            } else {
+                Log.d("Package_Single_View_Activity", "Package status update failed.");
+                isPackageStatusUpdate.postValue(false);
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("Update Package Status", "Error updating document", e);
+            isPackageStatusUpdate.postValue(false);
+        });
+        return isPackageStatusUpdate;
     }
 }
