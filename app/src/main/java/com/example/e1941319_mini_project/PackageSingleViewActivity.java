@@ -1,5 +1,6 @@
 package com.example.e1941319_mini_project;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -7,12 +8,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.e1941319_mini_project.model.Status;
 
@@ -30,6 +35,8 @@ public class PackageSingleViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_package_single_view);
 
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         TextView packageId = findViewById(R.id.packageId);
         TextView customerId = findViewById(R.id.customerId);
         TextView deliveryAddress = findViewById(R.id.deliveryAddress);
@@ -39,6 +46,9 @@ public class PackageSingleViewActivity extends AppCompatActivity {
         AutoCompleteTextView statusSelect = findViewById(R.id.status);
         LinearLayout status_view = findViewById(R.id.status_view);
         Button btn_update = findViewById(R.id.btn_update);
+
+        // auto complete text view editable disable
+        statusSelect.setKeyListener(null);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -52,6 +62,7 @@ public class PackageSingleViewActivity extends AppCompatActivity {
             StatusType[] statusArray = (StatusType[]) extras.get("statusArray");
             List<Status> statusList = (List<Status>) intent.getSerializableExtra("statusList");
 
+            // sort status list
             Collections.sort(statusList, (status, status2) -> {
                 @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 try {
@@ -62,6 +73,7 @@ public class PackageSingleViewActivity extends AppCompatActivity {
                 return 0;
             });
 
+            // add status to linear layout
             for (Status status : statusList) {
                 View view2 = LayoutInflater.from(PackageSingleViewActivity.this).inflate(R.layout.package_status, null, false);
                 TextView pkg_status_date = view2.findViewById(R.id.pkg_status_date);
@@ -73,6 +85,7 @@ public class PackageSingleViewActivity extends AppCompatActivity {
                 status_view.addView(view2);
             }
 
+            // check the logged user type
             if (loginUserType == UserType.USER) {
                 btn_update.setVisibility(View.GONE);
                 currentStatus.setVisibility(View.VISIBLE);
@@ -82,23 +95,52 @@ public class PackageSingleViewActivity extends AppCompatActivity {
             } else {
                 btn_update.setVisibility(View.VISIBLE);
 
-                if (!crsts.equals(StatusType.DELIVERED)) {
+                if (crsts.equals(StatusType.DELIVERED)) {
+                    currentStatusLabel.setVisibility(View.GONE);
+                    currentStatus.setVisibility(View.GONE);
+                    statusSelect.setVisibility(View.GONE);
+                } else {
                     currentStatusLabel.setVisibility(View.VISIBLE);
                     currentStatus.setVisibility(View.GONE);
                     statusSelect.setVisibility(View.VISIBLE);
                     ArrayAdapter<StatusType> adapter = new ArrayAdapter<>(PackageSingleViewActivity.this, android.R.layout.simple_list_item_1, statusArray);
 
                     statusSelect.setAdapter(adapter);
-                } else {
-                    currentStatusLabel.setVisibility(View.GONE);
-                    currentStatus.setVisibility(View.GONE);
-                    statusSelect.setVisibility(View.GONE);
+                    statusSelect.setText(crsts.toString(), false);
+
+                    btn_update.setOnClickListener(view -> {
+
+                    });
                 }
-
-                btn_update.setOnClickListener(view -> {
-
-                });
             }
         }
+    }
+
+    // add menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    // handle the menu item actions
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.itm_logout: {
+                Toast.makeText(PackageSingleViewActivity.this, "Logout...", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(PackageSingleViewActivity.this, LoginActivity.class);
+                startActivity(intent);
+                break;
+            }
+            case android.R.id.home: {
+                Toast.makeText(PackageSingleViewActivity.this, "Redirect to dashboard...", Toast.LENGTH_SHORT).show();
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

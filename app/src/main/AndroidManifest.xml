@@ -11,7 +11,8 @@
         android:theme="@style/Theme.E1941319_mini_project">
         <activity
             android:name=".PackageSingleViewActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:label="@string/single_package_view"/>
         <activity
             android:name=".StaffActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
