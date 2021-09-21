@@ -128,6 +128,8 @@ public class PackageSingleViewActivity extends AppCompatActivity {
                                 } else {
                                     Toast.makeText(PackageSingleViewActivity.this, "Package update failed..", Toast.LENGTH_SHORT).show();
                                 }
+
+                                finish();
                             }
                         });
                     });
