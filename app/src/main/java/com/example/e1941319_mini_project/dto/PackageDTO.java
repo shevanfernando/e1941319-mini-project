@@ -1,27 +1,18 @@
 package com.example.e1941319_mini_project.dto;
 
-public class PackageDTO {
+import com.example.e1941319_mini_project.StatusType;
 
-    private String packageId;
+public class PackageDTO {
     private final String customerId;
     private final String deliveryAddress;
     private final String description;
+    private final StatusType currentStatus;
 
-    public PackageDTO(String customerId, String deliveryAddress, String description) {
+    public PackageDTO(String customerId, String deliveryAddress, String description, StatusType currentStatus) {
         this.customerId = customerId;
         this.deliveryAddress = deliveryAddress;
         this.description = description;
-    }
-
-    public PackageDTO(String packageId, String customerId, String deliveryAddress, String description) {
-        this.packageId = packageId;
-        this.customerId = customerId;
-        this.deliveryAddress = deliveryAddress;
-        this.description = description;
-    }
-
-    public String getPackageId() {
-        return packageId;
+        this.currentStatus = currentStatus;
     }
 
     public String getCustomerId() {
@@ -36,13 +27,7 @@ public class PackageDTO {
         return description;
     }
 
-    @Override
-    public String toString() {
-        return "PackageDTO{" +
-                "packageId='" + packageId + '\'' +
-                ", customerId='" + customerId + '\'' +
-                ", deliveryAddress='" + deliveryAddress + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+    public StatusType getCurrentStatus() {
+        return currentStatus;
     }
 }

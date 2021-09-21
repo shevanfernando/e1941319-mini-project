@@ -1,6 +1,5 @@
 package com.example.e1941319_mini_project;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,16 +10,21 @@ import com.example.e1941319_mini_project.dto.FetchPackageDataDTO;
 import com.example.e1941319_mini_project.dto.LoginDTO;
 import com.example.e1941319_mini_project.dto.LoginResponseDTO;
 import com.example.e1941319_mini_project.dto.PackageDTO;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.example.e1941319_mini_project.model.Package;
+import com.example.e1941319_mini_project.model.Status;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DBAdapter {
     private final FirebaseFirestore FIREBANSEFIRESTORE;
@@ -50,25 +54,40 @@ public class DBAdapter {
 
     public MutableLiveData<Boolean> addNewPackage(@NonNull AddPackageActivity add, @NonNull PackageDTO packageDTO) {
         MutableLiveData<Boolean> isNewPackageAdd = new MutableLiveData<>();
-        Map<String, Object> pkg = new HashMap<>();
-        pkg.put("customerId", packageDTO.getCustomerId());
-        pkg.put("deliveryAddress", packageDTO.getDeliveryAddress());
-        pkg.put("description", packageDTO.getDescription());
 
-        IdSequenceGenerator sequenceGenerator = new IdSequenceGenerator(FIREBANSEFIRESTORE, "packages");
-        sequenceGenerator.generateId().observe(add, res -> {
+        AtomicReference<IdSequenceGenerator> sequenceGenerator = new AtomicReference<>(new IdSequenceGenerator(FIREBANSEFIRESTORE, "status_history"));
+
+        sequenceGenerator.get().generateId().observe(add, res -> {
             if (res != null) {
-                pkg.put("id", res.getId());
+                Map<String, Object> status = new HashMap<>();
+                status.put(
+                        new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
+                        packageDTO.getCurrentStatus());
 
-                FIREBANSEFIRESTORE.collection("packages").document(res.getDocumentId()).set(pkg).addOnSuccessListener(aVoid -> {
-                    Log.d("Add Package Activity", "DocumentSnapshot successfully written!");
-                    isNewPackageAdd.postValue(true);
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Add Package Activity", "Error writing document", e);
-                        isNewPackageAdd.postValue(false);
-                    }
+                FIREBANSEFIRESTORE.collection("status_history").document(res.getDocumentId()).set(status).addOnCompleteListener(aVoid -> {
+                    sequenceGenerator.set(new IdSequenceGenerator(FIREBANSEFIRESTORE, "packages"));
+                    sequenceGenerator.get().generateId().observe(add, result -> {
+                        if (result != null) {
+                            Map<String, Object> pkg = new HashMap<>();
+                            pkg.put("customerId", packageDTO.getCustomerId());
+                            pkg.put("deliveryAddress", packageDTO.getDeliveryAddress());
+                            pkg.put("description", packageDTO.getDescription());
+                            pkg.put("currentStatus", packageDTO.getCurrentStatus());
+                            pkg.put("id", result.getId());
+                            pkg.put("statusHistoryId", res.getDocumentId());
+
+                            FIREBANSEFIRESTORE.collection("packages").document(result.getDocumentId()).set(pkg).addOnSuccessListener(aVoid2 -> {
+                                Log.d("Add Package Activity", "DocumentSnapshot successfully written!");
+                                isNewPackageAdd.postValue(true);
+                            }).addOnFailureListener(e -> {
+                                Log.w("Add Package Activity", "Error writing document", e);
+                                isNewPackageAdd.postValue(false);
+                            });
+                        }
+                    });
+                }).addOnFailureListener(e -> {
+                    Log.w("Add Package Activity", "Error writing document", e);
+                    isNewPackageAdd.postValue(false);
                 });
             }
         });
@@ -113,11 +132,23 @@ public class DBAdapter {
             if (task.isSuccessful()) {
                 if (!task.getResult().isEmpty()) {
                     List<String> packageIdList = new ArrayList<>();
-                    List<PackageDTO> packageData = new ArrayList<>();
-
+                    List<Package> packageData = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         packageIdList.add(document.getId());
-                        packageData.add(new PackageDTO(document.getId(), document.getString("customerId"), document.getString("deliveryAddress"), document.getString("description")));
+
+                        List<Status> statusHistoryList = new ArrayList<>();
+
+                        FIREBANSEFIRESTORE.collection("status_history").document(Objects.requireNonNull(document.getString("statusHistoryId"))).get().addOnCompleteListener(task2 -> {
+                            if (task2.isSuccessful()) {
+                                if (task2.getResult().exists()) {
+                                    for (Map.Entry<String, Object> entry : task2.getResult().getData().entrySet()) {
+                                        statusHistoryList.add(new Status(entry.getKey(), (String) entry.getValue()));
+                                    }
+                                }
+                            }
+                        });
+
+                        packageData.add(new Package(document.getId(), document.getString("customerId"), document.getString("deliveryAddress"), document.getString("description"), document.getString("currentStatus"), statusHistoryList));
                     }
                     data.postValue(new FetchPackageDataDTO(packageIdList, packageData));
                 } else {

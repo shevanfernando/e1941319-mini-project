@@ -1,14 +1,14 @@
 package com.example.e1941319_mini_project.dto;
 
-import androidx.annotation.NonNull;
+import com.example.e1941319_mini_project.model.Package;
 
 import java.util.List;
 
 public class FetchPackageDataDTO {
     private final List<String> packageIdList;
-    private final List<PackageDTO> packageData;
+    private final List<Package> packageData;
 
-    public FetchPackageDataDTO(List<String> packageIdList, List<PackageDTO> packageData) {
+    public FetchPackageDataDTO(List<String> packageIdList, List<Package> packageData) {
         this.packageIdList = packageIdList;
         this.packageData = packageData;
     }
@@ -17,16 +17,7 @@ public class FetchPackageDataDTO {
         return packageIdList;
     }
 
-    public List<PackageDTO> getPackageData() {
+    public List<Package> getPackageData() {
         return packageData;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "FetchPackageDataDTO{" +
-                "packageIdList=" + packageIdList +
-                ", packageData=" + packageData +
-                '}';
     }
 }

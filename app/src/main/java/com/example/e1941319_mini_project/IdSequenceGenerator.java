@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.e1941319_mini_project.model.SequenceGenerator;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -47,7 +48,7 @@ public class IdSequenceGenerator {
                     Log.e(TAG, "Error getting documents: ", task.getException());
                 }
             }
-        });
+        }).addOnFailureListener(e -> Log.w(TAG, COLLECTIONNAME, e));
         return id;
     }
 }
