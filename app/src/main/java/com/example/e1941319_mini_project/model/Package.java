@@ -42,4 +42,16 @@ public class Package {
     public List<Status> getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() {
+        return "Package{" +
+                "packageId='" + packageId + '\'' +
+                ", customerId='" + customerId + '\'' +
+                ", deliveryAddress='" + deliveryAddress + '\'' +
+                ", description='" + description + '\'' +
+                ", currentStatus='" + currentStatus + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

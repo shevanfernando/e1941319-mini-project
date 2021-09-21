@@ -57,18 +57,17 @@ public class DBAdapter {
     public MutableLiveData<Boolean> addNewPackage(@NonNull AddPackageActivity add, @NonNull PackageDTO packageDTO) {
         MutableLiveData<Boolean> isNewPackageAdd = new MutableLiveData<>();
 
-        AtomicReference<IdSequenceGenerator> sequenceGenerator = new AtomicReference<>(new IdSequenceGenerator(FIREBANSEFIRESTORE, "status_history"));
-
-        sequenceGenerator.get().generateId().observe(add, res -> {
+        IdSequenceGenerator sequenceGenerator = new IdSequenceGenerator(FIREBANSEFIRESTORE, "status_history");
+        sequenceGenerator.generateId().observe(add, res -> {
             if (res != null) {
                 Map<String, Object> status = new HashMap<>();
                 status.put(
                         new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
                         packageDTO.getCurrentStatus());
-
+                status.put("id", res.getId());
                 FIREBANSEFIRESTORE.collection("status_history").document(res.getDocumentId()).set(status).addOnCompleteListener(aVoid -> {
-                    sequenceGenerator.set(new IdSequenceGenerator(FIREBANSEFIRESTORE, "packages"));
-                    sequenceGenerator.get().generateId().observe(add, result -> {
+                    IdSequenceGenerator sequenceGenerator1 = new IdSequenceGenerator(FIREBANSEFIRESTORE, "packages");
+                    sequenceGenerator1.generateId().observe(add, result -> {
                         if (result != null) {
                             Map<String, Object> pkg = new HashMap<>();
                             pkg.put("customerId", packageDTO.getCustomerId());
@@ -144,7 +143,9 @@ public class DBAdapter {
                             if (task2.isSuccessful()) {
                                 if (task2.getResult().exists()) {
                                     for (Map.Entry<String, Object> entry : task2.getResult().getData().entrySet()) {
-                                        statusHistoryList.add(new Status(entry.getKey(), (String) entry.getValue()));
+                                        if (!entry.getKey().equals("id")) {
+                                            statusHistoryList.add(new Status(entry.getKey(), (String) entry.getValue()));
+                                        }
                                     }
                                 }
                             }

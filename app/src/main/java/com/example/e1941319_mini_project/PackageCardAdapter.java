@@ -87,6 +87,13 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
                 }
             });
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println(pkg);
+            }
+        });
     }
 
     @Override
