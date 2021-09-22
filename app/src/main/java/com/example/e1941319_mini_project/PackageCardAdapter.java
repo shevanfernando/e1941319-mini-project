@@ -53,7 +53,6 @@ public class PackageCardAdapter extends RecyclerView.Adapter<PackageCardAdapter.
     @Override
     public void onBindViewHolder(@NonNull PackageViewHolder holder, int position) {
         Package pkg = packageList.get(position);
-        System.out.println(pkg);
         holder.crd_pkg_heading.setText(pkg.getPackageId());
         holder.crd_pkg_address_label.setText(pkg.getDeliveryAddress());
         holder.crd_pkg_description.setText(pkg.getDescription());

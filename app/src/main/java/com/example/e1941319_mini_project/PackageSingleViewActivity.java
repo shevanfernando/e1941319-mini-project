@@ -60,8 +60,6 @@ public class PackageSingleViewActivity extends AppCompatActivity {
 
             Package pkg = packageViewDTO.getPackageData();
 
-            System.out.println(pkg);
-
             packageId.setText(pkg.getPackageId());
             customerId.setText(pkg.getCustomerId());
             deliveryAddress.setText(pkg.getDeliveryAddress());
