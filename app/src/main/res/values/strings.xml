@@ -35,4 +35,9 @@
     <string name="single_package_view">Single Package View</string>
     <string name="postmen_dashboard">Postmen Dashboard</string>
     <string name="user_dashboard">User Dashboard</string>
+    <string name="user_registration">User Registration</string>
+    <string name="registration">Registration</string>
+    <string name="register">register</string>
+    <string name="hint_cn_password">Re-enter Password</string>
+    <string name="new_user_register">New users? Register here.</string>
 </resources>

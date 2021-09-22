@@ -8,8 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.e1941319_mini_project.dto.FetchPackageDataDTO;
-import com.example.e1941319_mini_project.dto.LoginDTO;
-import com.example.e1941319_mini_project.dto.LoginResponseDTO;
+import com.example.e1941319_mini_project.dto.LoginAndRegisterDTO;
+import com.example.e1941319_mini_project.dto.LoginAndRegisterResponseDTO;
 import com.example.e1941319_mini_project.dto.PackageDTO;
 import com.example.e1941319_mini_project.dto.StatusUpdateDTO;
 import com.example.e1941319_mini_project.model.Package;
@@ -34,24 +34,61 @@ public class DBAdapter {
         this.FIREBANSEFIRESTORE = FirebaseFirestore.getInstance();
     }
 
-    public MutableLiveData<LoginResponseDTO> login(@NonNull LoginDTO loginDTO) {
-        MutableLiveData<LoginResponseDTO> loginRequest = new MutableLiveData<>();
-        FIREBANSEFIRESTORE.collection("users").whereEqualTo("username", loginDTO.getUsername()).whereEqualTo("password", loginDTO.getPassword()).get().addOnCompleteListener(task -> {
+    public MutableLiveData<LoginAndRegisterResponseDTO> login(@NonNull LoginAndRegisterDTO loginAndRegisterDTO) {
+        MutableLiveData<LoginAndRegisterResponseDTO> loginRequest = new MutableLiveData<>();
+        FIREBANSEFIRESTORE.collection("users").whereEqualTo("username", loginAndRegisterDTO.getUsername()).whereEqualTo("password", loginAndRegisterDTO.getPassword()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 if (!task.getResult().isEmpty()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        loginRequest.postValue(new LoginResponseDTO(UserType.valueOf((String) document.get("accountType")), document.getId(), true));
+                        loginRequest.postValue(new LoginAndRegisterResponseDTO(UserType.valueOf((String) document.get("accountType")), document.getId(), true));
                     }
                 } else {
-                    loginRequest.postValue(new LoginResponseDTO(null, null, false));
+                    loginRequest.postValue(new LoginAndRegisterResponseDTO(null, null, false));
                 }
             } else {
                 Log.e("Login Activity", "Error getting documents: ", task.getException());
+                loginRequest.postValue(new LoginAndRegisterResponseDTO(null, null, false));
             }
         });
         return loginRequest;
     }
 
+    public MutableLiveData<LoginAndRegisterResponseDTO> register(@NonNull UserRegistrationActivity reg, @NonNull LoginAndRegisterDTO registerData) {
+        MutableLiveData<LoginAndRegisterResponseDTO> registerRequest = new MutableLiveData<>();
+        IdSequenceGenerator sequenceGenerator = new IdSequenceGenerator(FIREBANSEFIRESTORE, "users");
+
+        sequenceGenerator.generateId().observe(reg, res -> {
+            if (res != null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", res.getId());
+                map.put("username", registerData.getUsername());
+                map.put("password", registerData.getPassword());
+                map.put("accountType", UserType.USER);
+
+                FIREBANSEFIRESTORE.collection("users").whereEqualTo("username", registerData.getUsername()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (Objects.requireNonNull(task.getResult()).size() == 0) {
+                            FIREBANSEFIRESTORE.collection("users").document(res.getDocumentId()).set(map).addOnCompleteListener(task2 -> {
+                                if (task.isSuccessful()) {
+                                    Log.d("User Registration Activity", "New user successfuly added");
+                                    registerRequest.postValue(new LoginAndRegisterResponseDTO(UserType.USER, res.getDocumentId(), true));
+                                }
+                            }).addOnFailureListener(e -> {
+                                Log.e("User Registration Activity", "Error writing document", e);
+                            });
+                        } else {
+                            registerRequest.postValue(new LoginAndRegisterResponseDTO(null, null, false));
+                        }
+                    }
+                }).addOnFailureListener(e -> {
+                    Log.e("User Registration Activity", "Error writing document", e);
+                    registerRequest.postValue(new LoginAndRegisterResponseDTO(null, null, false));
+                });
+            }
+        });
+
+        return registerRequest;
+    }
 
     @SuppressLint("SimpleDateFormat")
     public MutableLiveData<Boolean> addNewPackage(@NonNull AddPackageActivity add, @NonNull PackageDTO packageDTO) {
@@ -78,10 +115,10 @@ public class DBAdapter {
                             pkg.put("statusHistoryId", res.getDocumentId());
 
                             FIREBANSEFIRESTORE.collection("packages").document(result.getDocumentId()).set(pkg).addOnSuccessListener(aVoid2 -> {
-                                Log.d("Add Package Activity", "DocumentSnapshot successfully written!");
+                                Log.d("Add Package Activity", "New package successfully added!");
                                 isNewPackageAdd.postValue(true);
                             }).addOnFailureListener(e -> {
-                                Log.w("Add Package Activity", "Error writing document", e);
+                                Log.e("Add Package Activity", "Error writing document", e);
                                 isNewPackageAdd.postValue(false);
                             });
                         }

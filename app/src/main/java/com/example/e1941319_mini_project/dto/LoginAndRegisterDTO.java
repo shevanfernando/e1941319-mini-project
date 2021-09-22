@@ -1,11 +1,11 @@
 package com.example.e1941319_mini_project.dto;
 
-public class LoginDTO {
+public class LoginAndRegisterDTO {
 
     private String username;
     private String password;
 
-    public LoginDTO(String username, String password) {
+    public LoginAndRegisterDTO(String username, String password) {
         this.username = username;
         this.password = password;
     }

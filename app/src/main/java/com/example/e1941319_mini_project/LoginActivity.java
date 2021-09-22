@@ -4,14 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.e1941319_mini_project.dto.LoginDTO;
+import com.example.e1941319_mini_project.dto.LoginAndRegisterDTO;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,8 +24,14 @@ public class LoginActivity extends AppCompatActivity {
         Button btn_login = (Button) findViewById(R.id.btn_login);
         EditText txt_username = (EditText) findViewById(R.id.txt_username);
         EditText txt_password = (EditText) findViewById(R.id.txt_password);
+        TextView btn_register = (TextView) findViewById(R.id.btn_register);
+
         DBAdapter db = new DBAdapter();
 
+        btn_register.setOnClickListener(view -> {
+            Intent intent = new Intent(LoginActivity.this, UserRegistrationActivity.class);
+            startActivity(intent);
+        });
 
         btn_login.setOnClickListener(view -> {
             try {
@@ -40,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (TextUtils.isEmpty(password)) {
                     Toast.makeText(LoginActivity.this, "Password field is required!", Toast.LENGTH_LONG).show();
                 } else {
-                    db.login(new LoginDTO(username, password)).observe(LoginActivity.this, result -> {
+                    db.login(new LoginAndRegisterDTO(username, password)).observe(LoginActivity.this, result -> {
                         if (result.getStatus()) {
                             Toast.makeText(LoginActivity.this, String.format("%s Login Successfully.", username), Toast.LENGTH_SHORT).show();
                             Intent intent;

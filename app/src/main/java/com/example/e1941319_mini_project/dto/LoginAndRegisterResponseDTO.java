@@ -2,13 +2,13 @@ package com.example.e1941319_mini_project.dto;
 
 import com.example.e1941319_mini_project.UserType;
 
-public class LoginResponseDTO {
+public class LoginAndRegisterResponseDTO {
 
     private final UserType userType;
     private final String customerId;
     private final Boolean status;
 
-    public LoginResponseDTO(UserType userType, String customerId, Boolean status) {
+    public LoginAndRegisterResponseDTO(UserType userType, String customerId, Boolean status) {
         this.userType = userType;
         this.customerId = customerId;
         this.status = status;
