@@ -99,7 +99,7 @@ public class DBAdapter {
             if (res != null) {
                 Map<String, Object> status = new HashMap<>();
                 status.put(
-                        new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
+                        new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()),
                         packageDTO.getCurrentStatus());
                 status.put("id", res.getId());
                 FIREBANSEFIRESTORE.collection("status_history").document(res.getDocumentId()).set(status).addOnCompleteListener(aVoid -> {
@@ -209,17 +209,21 @@ public class DBAdapter {
         return i;
     }
 
+    @SuppressLint("SimpleDateFormat")
     public MutableLiveData<Boolean> updatePackageStatus(StatusUpdateDTO statusUpdateDTO) {
         MutableLiveData<Boolean> isPackageStatusUpdate = new MutableLiveData<>();
         Map<String, Object> map = new HashMap<>();
-        map.put("currentStatus", statusUpdateDTO.getStatus());
+        map.put("currentStatus", statusUpdateDTO.getNewStatus());
         FIREBANSEFIRESTORE.collection("packages").document(statusUpdateDTO.getPackageId()).update(map).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Map<String, Object> status = new HashMap<>();
+                for (Status sts : statusUpdateDTO.getStatusList()) {
+                    status.put(sts.getDate(), sts.getStatus());
+                }
                 status.put(
-                        new SimpleDateFormat("yyyy-MM-dd").format(new Date()),
-                        statusUpdateDTO.getStatus());
-                FIREBANSEFIRESTORE.collection("status_history").document(statusUpdateDTO.getStatusHistoryId()).update(status);
+                        new SimpleDateFormat("yyyy-MM-dd hh:mm").format(new Date()),
+                        statusUpdateDTO.getNewStatus());
+                FIREBANSEFIRESTORE.collection("status_history").document(statusUpdateDTO.getStatusHistoryId()).set(status);
                 Log.d("Package_Single_View_Activity", "Package status update successfully.");
                 isPackageStatusUpdate.postValue(true);
             } else {

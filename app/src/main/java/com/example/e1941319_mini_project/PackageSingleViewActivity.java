@@ -122,7 +122,7 @@ public class PackageSingleViewActivity extends AppCompatActivity {
                     DBAdapter db = new DBAdapter();
 
                     btn_update.setOnClickListener(view -> {
-                        MutableLiveData<Boolean> isPackageStatusUpdate = db.updatePackageStatus(new StatusUpdateDTO(pkg.getPackageId(), StatusType.valueOf(statusSelect.getText().toString()), pkg.getStatusHistoryId()));
+                        MutableLiveData<Boolean> isPackageStatusUpdate = db.updatePackageStatus(new StatusUpdateDTO(pkg.getPackageId(), StatusType.valueOf(statusSelect.getText().toString()), pkg.getStatusHistoryId(), statusList));
 
                         isPackageStatusUpdate.observe(PackageSingleViewActivity.this, res -> {
                             if (res != null) {
